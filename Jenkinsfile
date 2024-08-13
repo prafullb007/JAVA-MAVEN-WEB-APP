@@ -26,6 +26,7 @@ pipeline {
                 }
                 
             }
+        }
         stage('Maven Integration') {
             steps {
                 script{
@@ -36,5 +37,4 @@ pipeline {
         }
     }
     
-}
 }
