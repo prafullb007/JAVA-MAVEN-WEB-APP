@@ -26,6 +26,13 @@ pipeline {
                 }
                 
             }
+        stage('Unit Testing') {
+            steps {
+                script{
+                    mvnintegrationTest()
+                }
+                
+            }    
         }
     }
     
