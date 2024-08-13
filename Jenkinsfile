@@ -26,7 +26,7 @@ pipeline {
                 }
                 
             }
-        stage('Unit Testing') {
+        stage('Maven Integration') {
             steps {
                 script{
                     mvnintegrationTest()
