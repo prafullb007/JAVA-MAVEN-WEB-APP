@@ -26,14 +26,14 @@ pipeline {
                 }
                 
             }
-        // stage('Maven Integration') {
-        //     steps {
-        //         script{
-        //             mvnintegrationTest()
-        //         }
+        stage('Maven Integration') {
+            steps {
+                script{
+                    mvnintegrationTest()
+                }
                 
-        //     }    
-        // }
+            }    
+        }
     }
     
 }
