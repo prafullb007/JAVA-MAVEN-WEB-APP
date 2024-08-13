@@ -14,8 +14,8 @@ pipeline {
             steps {
                 // git 'https://github.com/prafullb007/JAVA-MAVEN-WEB-APP.git'
                 gitCheckout(
-                    branch: 'master',
-                    url: 'https://github.com/prafullb007/JAVA-MAVEN-WEB-APP.git'
+                    branch: "master",
+                    url: "https://github.com/prafullb007/JAVA-MAVEN-WEB-APP.git"
                 )
             }
         }
