@@ -48,7 +48,8 @@ pipeline {
             when {expression { params.action=='create'}}
             steps {
                 script{
-                    statiCodeAnalysis()
+                    def sonarqubecredentialsId='sonarcube-api'
+                    statiCodeAnalysis(sonarqubecredentialsId)
                 }
                 
             }    
