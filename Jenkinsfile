@@ -15,7 +15,7 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            when {expression { choice.action=='create'}}
+            when {expression { params.action=='create'}}
             steps {
                 // git 'https://github.com/prafullb007/JAVA-MAVEN-WEB-APP.git'
                 gitCheckout(
@@ -26,7 +26,7 @@ pipeline {
         }
         
         stage('Unit Testing') {
-            when {expression { choice.action=='create'}}
+            when {expression { params.action=='create'}}
             steps {
                 script{
                     mvnTest()
@@ -36,7 +36,7 @@ pipeline {
         }
         
         stage('Maven Integration') {
-            when {expression { choice.action=='create'}}
+            when {expression { params.action=='create'}}
             steps {
                 script{
                     mvnintegrationTest()
@@ -45,7 +45,7 @@ pipeline {
             }    
         }
         stage('Static Code Analysis: Sonaqube') {
-            when {expression { choice.action=='create'}}
+            when {expression { params.action=='create'}}
             steps {
                 script{
                     statiCodeAnalysis()
