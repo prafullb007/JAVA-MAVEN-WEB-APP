@@ -13,11 +13,58 @@ pipeline {
         stage('Checkout') {
             when {expression { params.action=='create'}}
             steps {
-                // git 'https://github.com/prafullb007/JAVA-MAVEN-WEB-APP.git'
                 gitCheckout(
                     branch: "master",
                     url: "https://github.com/prafullb007/JAVA-MAVEN-WEB-APP.git"
                 )
+            }
+        }
+        stage('Unit Testing') {
+            when {expression { params.action=='create'}}
+            steps {
+                script{
+                    mvnTest()
+                }
+                
+            }
+        }
+        
+        stage('Maven Integration') {
+            when {expression { params.action=='create'}}
+            steps {
+                script{
+                    mvnintegrationTest()
+                }
+                
+            }    
+        }
+        // stage('Static Code Analysis: Sonaqube') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             def sonarqubecredentialsId='sonarcube-api'
+        //             statiCodeAnalysis(sonarqubecredentialsId)
+        //         }
+                
+        //     }    
+        // }
+        // stage('Quality Gates Status Check: Sonaqube') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             def sonarqubecredentialsId='sonarcube-api'
+        //             QualityGateStatus(sonarqubecredentialsId)
+        //         }
+                
+        //     }    
+        // }
+        stage('Maven Build : Maven') {
+            when {expression { params.action=='create'}}
+            steps {
+                script{
+                    mvnBuild()
+                }
+                
             }
         }
         stage('Docker Image Build: ECR') {
