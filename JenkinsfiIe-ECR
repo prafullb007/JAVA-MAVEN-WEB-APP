@@ -1,0 +1,61 @@
+@Library('my-shared-lib') _
+pipeline {
+    agent any
+    parameters{
+        choice(name: 'action', choices: 'create\ndelete', description: 'choose create/Destroy' ) 
+        string(name: 'aws_account_id', description: 'aws account id', defaultValue: '211125400428')
+        string(name: 'region', description: 'ECR Region', defaultValue: 'us-east-1')
+        string(name: 'ecr_repoName', description: 'name of the ECR', defaultValue: 'springbootmaven')
+        }
+
+
+    stages {
+        stage('Checkout') {
+            when {expression { params.action=='create'}}
+            steps {
+                // git 'https://github.com/prafullb007/JAVA-MAVEN-WEB-APP.git'
+                gitCheckout(
+                    branch: "master",
+                    url: "https://github.com/prafullb007/JAVA-MAVEN-WEB-APP.git"
+                )
+            }
+        }
+        stage('Docker Image Build: ECR') {
+            when {expression { params.action=='create'}}
+            steps {
+                script{
+                    dockerBuild("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+                }
+                
+            }
+        }
+        stage('Docker Image Scan: ECR') {
+            when {expression { params.action=='create'}}
+            steps {
+                script{
+                    dockerImageScan("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+                }
+                
+            }
+        }
+        stage('Docker Image Push: ECR') {
+            when {expression { params.action=='create'}}
+            steps {
+                script{
+                    dockerImagePush("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+                }
+                
+            }
+        }
+        stage('Docker Image cleanUp: ECR') {
+            when {expression { params.action=='create'}}
+            steps {
+                script{
+                    dockerImagePush("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+                }
+                
+            }
+        }
+
+    }
+}

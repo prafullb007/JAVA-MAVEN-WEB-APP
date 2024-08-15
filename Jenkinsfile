@@ -1,13 +1,6 @@
 @Library('my-shared-lib') _
 pipeline {
     agent any
-    
-    // environment {
-    //     KUBECONFIG = credentials('kubeconfig-id') // Use Jenkins credentials for Kubernetes
-    //     DOCKER_IMAGE = "my-app-image:latest"
-    //     DEPLOYMENT_NAME = "my-app-deployment"
-    //     NAMESPACE = "my-app-namespace"
-    // }
     parameters{
         choice(name: 'action', choices: 'create\ndelete', description: 'choose create/Destroy' ) 
         string(name: 'ImageName', description: 'name of the docker build', defaultValue: 'springboot')
