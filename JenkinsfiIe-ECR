@@ -98,7 +98,7 @@ pipeline {
             when {expression { params.action=='create'}}
             steps {
                 script{
-                    dockerImagePush("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+                    dockerImageCleanup("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
                 }
                 
             }
