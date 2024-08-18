@@ -108,7 +108,7 @@ pipeline {
         //     }
         // }
         stage('Create EKS Cluster: EKS') {
-            // when {expression { params.action=='create'}}
+            when {expression { params.action=='create'}}
             steps {
                 script{
                     dir('tearrformclusteraws') {
