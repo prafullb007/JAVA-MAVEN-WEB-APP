@@ -9,7 +9,7 @@ variable "cluster_name" {
   type        = string
   default     = "my-cluster"
 }
-
+/*
 variable "vpc_id" {
   description = "VPC ID where the EKS cluster will be deployed"
   type        = string
@@ -26,3 +26,4 @@ variable "access_key" {
 variable "secret_key" {
     default = ""
 }
+*/
