@@ -1,7 +1,7 @@
 variable "region" {
   description = "The AWS region to deploy the cluster"
   type        = string
-  default     = "us-west-2"
+  default     = "us-east-1"
 }
 
 variable "cluster_name" {
@@ -25,9 +25,4 @@ variable "access_key" {
 }
 variable "secret_key" {
     default = ""
-}
-
-
-variable "region" {
-    default = "us-east-1"
 }
