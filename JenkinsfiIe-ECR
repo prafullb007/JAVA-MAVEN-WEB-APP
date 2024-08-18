@@ -112,7 +112,7 @@ pipeline {
             steps {
                 script{
                     dir('tearrformclusteraws') {
-                        """
+                       sh """
                         terraform init
                         terraform plan
                         terraform apply
