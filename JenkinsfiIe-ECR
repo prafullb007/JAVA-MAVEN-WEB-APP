@@ -7,6 +7,10 @@ pipeline {
         string(name: 'region', description: 'ECR Region', defaultValue: 'us-east-1')
         string(name: 'ecr_repoName', description: 'name of the ECR', defaultValue: 'springbootmaven')
         }
+        // {
+        //     access_key=credentials('aws_access_key')
+        //     scret_key=credentials('aws_secret_key')
+        // }
 
 
     stages {
@@ -19,25 +23,25 @@ pipeline {
                 )
             }
         }
-        stage('Unit Testing') {
-            when {expression { params.action=='create'}}
-            steps {
-                script{
-                    mvnTest()
-                }
+        // stage('Unit Testing') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             mvnTest()
+        //         }
                 
-            }
-        }
+        //     }
+        // }
         
-        stage('Maven Integration') {
-            when {expression { params.action=='create'}}
-            steps {
-                script{
-                    mvnintegrationTest()
-                }
+        // stage('Maven Integration') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             mvnintegrationTest()
+        //         }
                 
-            }    
-        }
+        //     }    
+        // }
         // stage('Static Code Analysis: Sonaqube') {
         //     when {expression { params.action=='create'}}
         //     steps {
@@ -58,47 +62,61 @@ pipeline {
                 
         //     }    
         // }
-        stage('Maven Build : Maven') {
-            when {expression { params.action=='create'}}
-            steps {
-                script{
-                    mvnBuild()
-                }
+        // stage('Maven Build : Maven') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             mvnBuild()
+        //         }
                 
-            }
-        }
-        stage('Docker Image Build: ECR') {
-            when {expression { params.action=='create'}}
-            steps {
-                script{
-                    dockerBuild("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
-                }
+        //     }
+        // }
+        // stage('Docker Image Build: ECR') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             dockerBuild("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+        //         }
                 
-            }
-        }
-        stage('Docker Image Scan: ECR') {
-            when {expression { params.action=='create'}}
-            steps {
-                script{
-                    dockerImageScan("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
-                }
+        //     }
+        // }
+        // stage('Docker Image Scan: ECR') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             dockerImageScan("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+        //         }
                 
-            }
-        }
-        stage('Docker Image Push: ECR') {
-            when {expression { params.action=='create'}}
-            steps {
-                script{
-                    dockerImagePush("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
-                }
+        //     }
+        // }
+        // stage('Docker Image Push: ECR') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             dockerImagePush("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+        //         }
                 
-            }
-        }
-        stage('Docker Image cleanUp: ECR') {
-            when {expression { params.action=='create'}}
+        //     }
+        // }
+        // stage('Docker Image cleanUp: ECR') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             dockerImageCleanup("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+        //         }
+                
+        //     }
+        // }
+        stage('Create EKS Cluster: EKS') {
+            // when {expression { params.action=='create'}}
             steps {
                 script{
-                    dockerImageCleanup("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+                    dir('tearrformclusteraws') {
+                        """
+                        terraform init
+                        terraform plan
+                        """
+                    }
                 }
                 
             }
