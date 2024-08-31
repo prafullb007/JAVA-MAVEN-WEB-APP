@@ -3,10 +3,10 @@ module "eks_module" {
   source          = "terraform-aws-modules/eks/aws"
   cluster_name    = "my-cluster"
   cluster_version = "1.24"  # Update to your desired Kubernetes version
-  vpc_subnets     = ["subnet-03f3cd99a48a2db7c", "subnet-001a3b80bd44fbbd4"]  # Update to your subnets
+  subnet_ids      = ["subnet-03f3cd99a48a2db7c", "subnet-001a3b80bd44fbbd4"]  # Update to your subnets
   vpc_id          = "vpc-0532cc35649634df9"  # Update to your VPC ID
 
-  node_groups = {
+  eks_managed_node_groups = {
     eks_nodes = {
       desired_capacity = 2
       max_capacity     = 3
