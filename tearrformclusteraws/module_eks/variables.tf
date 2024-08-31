@@ -48,10 +48,6 @@ variable "instance_type" {
   default     = "t3.medium"
 }
 
-variable "key_name" {
-  description = "SSH key name for the worker nodes"
-  type        = string
-}
 
 variable "tags" {
   description = "Tags to apply to resources"
