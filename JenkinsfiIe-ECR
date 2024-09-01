@@ -113,6 +113,7 @@ pipeline {
                 script{
                     dir('tearrformclusteraws') {
                        sh """
+                        terraform refresh
                         terraform init
                         terraform plan
                         terraform apply -auto-approve
