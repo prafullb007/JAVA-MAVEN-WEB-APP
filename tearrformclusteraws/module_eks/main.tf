@@ -10,6 +10,11 @@ resource "aws_eks_cluster" "eks" {
   version = var.cluster_version
 
   tags = var.tags
+   depends_on = [
+    aws_iam_role.eks_cluster_role,
+    aws_iam_role_policy_attachment.eks_cluster_AmazonEKSClusterPolicy,
+    aws_iam_role_policy_attachment.eks_cluster_AmazonEKSVPCResourceController
+  ]
 }
 
 resource "aws_iam_role" "eks_cluster_role" {
