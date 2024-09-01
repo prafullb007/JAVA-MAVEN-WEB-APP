@@ -116,6 +116,7 @@ pipeline {
                         terraform refresh
                         terraform init
                         terraform plan
+                        terraform state list
                         terraform apply -auto-approve
                         """
                     }
