@@ -91,7 +91,7 @@ pipeline {
                     }
                     if (apply) {
                         sh """
-                            aws eks update --region ${params.region} update-kubeconfig --name ${params.cluster}
+                            aws eks --region ${params.region} update-kubeconfig --name ${params.cluster}
                             curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
                             chmod +x kubectl
                             sudo mv kubectl /usr/local/bin/
