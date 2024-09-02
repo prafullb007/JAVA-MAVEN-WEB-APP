@@ -114,7 +114,7 @@ pipeline {
                     dir('tearrformclusteraws') {
                        sh """
                         terraform refresh
-                        terraform init
+                        terraform init -upgrade
                         terraform plan
                         terraform state list
                         export TF_LOG=DEBUG
