@@ -117,7 +117,7 @@ pipeline {
                         terraform init -upgrade
                         terraform plan
                         terraform state list
-                        // terraform apply -auto-approve
+                        # terraform apply -auto-approve
                         """
                     }
                 }
