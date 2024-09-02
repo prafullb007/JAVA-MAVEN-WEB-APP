@@ -117,7 +117,6 @@ pipeline {
                         terraform init -upgrade
                         terraform plan
                         terraform state list
-                        export TF_LOG=DEBUG
                         terraform apply -auto-approve
                         """
                     }
