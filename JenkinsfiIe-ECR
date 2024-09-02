@@ -118,6 +118,8 @@ pipeline {
                         terraform plan
                         terraform state list
                         terraform apply -auto-approve
+                        terraform destroy -auto-approve
+
                         """
                     }
                 }
