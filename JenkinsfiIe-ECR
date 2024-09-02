@@ -1,21 +1,20 @@
 @Library('my-shared-lib') _
 pipeline {
     agent any
-    parameters{
-        choice(name: 'action', choices: 'create\ndelete', description: 'choose create/Destroy' ) 
-        string(name: 'aws_account_id', description: 'aws account id', defaultValue: '211125400428')
+    parameters {
+        choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/destroy')
+        string(name: 'aws_account_id', description: 'AWS Account ID', defaultValue: '211125400428')
         string(name: 'region', description: 'ECR Region', defaultValue: 'us-east-1')
-        string(name: 'ecr_repoName', description: 'name of the ECR', defaultValue: 'springbootmaven')
-        }
-        // {
-        //     access_key=credentials('aws_access_key')
-        //     scret_key=credentials('aws_secret_key')
-        // }
+        string(name: 'ecr_repoName', description: 'Name of the ECR', defaultValue: 'springbootmaven')
+    }
 
+    environment {
+        KUBECTL_VERSION = "v1.28.0" // specify the version or use 'stable.txt' to get the latest stable version
+    }
 
     stages {
         stage('Checkout') {
-            when {expression { params.action=='create'}}
+            when { expression { params.action == 'create' } }
             steps {
                 gitCheckout(
                     branch: "master",
@@ -23,133 +22,82 @@ pipeline {
                 )
             }
         }
-        // stage('Unit Testing') {
-        //     when {expression { params.action=='create'}}
-        //     steps {
-        //         script{
-        //             mvnTest()
-        //         }
-                
-        //     }
-        // }
-        
-        // stage('Maven Integration') {
-        //     when {expression { params.action=='create'}}
-        //     steps {
-        //         script{
-        //             mvnintegrationTest()
-        //         }
-                
-        //     }    
-        // }
-        // stage('Static Code Analysis: Sonaqube') {
-        //     when {expression { params.action=='create'}}
-        //     steps {
-        //         script{
-        //             def sonarqubecredentialsId='sonarcube-api'
-        //             statiCodeAnalysis(sonarqubecredentialsId)
-        //         }
-                
-        //     }    
-        // }
-        // stage('Quality Gates Status Check: Sonaqube') {
-        //     when {expression { params.action=='create'}}
-        //     steps {
-        //         script{
-        //             def sonarqubecredentialsId='sonarcube-api'
-        //             QualityGateStatus(sonarqubecredentialsId)
-        //         }
-                
-        //     }    
-        // }
-        // stage('Maven Build : Maven') {
-        //     when {expression { params.action=='create'}}
-        //     steps {
-        //         script{
-        //             mvnBuild()
-        //         }
-                
-        //     }
-        // }
+
         stage('Docker Image Build: ECR') {
-            when {expression { params.action=='create'}}
+            when { expression { params.action == 'create' } }
             steps {
-                script{
-                    dockerBuild("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+                script {
+                    dockerBuild("${params.aws_account_id}", "${params.region}", "${params.ecr_repoName}")
                 }
-                
             }
         }
+
         stage('Docker Image Scan: ECR') {
-            when {expression { params.action=='create'}}
+            when { expression { params.action == 'create' } }
             steps {
-                script{
-                    dockerImageScan("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+                script {
+                    dockerImageScan("${params.aws_account_id}", "${params.region}", "${params.ecr_repoName}")
                 }
-                
             }
         }
+
         stage('Docker Image Push: ECR') {
-            when {expression { params.action=='create'}}
+            when { expression { params.action == 'create' } }
             steps {
-                script{
-                    dockerImagePush("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+                script {
+                    dockerImagePush("${params.aws_account_id}", "${params.region}", "${params.ecr_repoName}")
                 }
-                
             }
         }
+
         stage('Docker Image cleanUp: ECR') {
-            when {expression { params.action=='create'}}
+            when { expression { params.action == 'create' } }
             steps {
-                script{
-                    dockerImageCleanup("${params.aws_account_id}","${params.region}","${params.ecr_repoName}")
+                script {
+                    dockerImageCleanup("${params.aws_account_id}", "${params.region}", "${params.ecr_repoName}")
                 }
-                
             }
         }
+
         stage('Create EKS Cluster: EKS') {
-            when {expression { params.action=='create'}}
+            when { expression { params.action == 'create' } }
             steps {
-                script{
+                script {
                     dir('tearrformclusteraws') {
-                       sh """
-                        terraform refresh
-                        terraform init -upgrade
-                        terraform plan
-                        terraform state list
-                        # terraform apply -auto-approve
+                        sh """
+                            terraform init -upgrade
+                            terraform refresh
+                            terraform plan
+                            terraform state list
+                            # terraform apply -auto-approve
                         """
                     }
                 }
-                
             }
         }
-         stage('Deployment on EKS Cluster'){
-            when { expression {  params.action == 'create' } }
-            steps{
-                script{
-                  
-                  def apply = false
 
-                  try{
-                    input message: 'please confirm to deploy on eks', ok: 'Ready to apply the config ?'
-                    apply = true
-                  }catch(err){
-                    apply= false
-                    currentBuild.result  = 'UNSTABLE'
-                  }
-                  if(apply){
-
-                    sh """
-                      curl -LO 'https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl'
-                      chmod +x kubectl
-                      sudo mv kubectl /usr/local/bin/
-                      kubectl apply -f   .
-                    """
-                  }
+        stage('Deployment on EKS Cluster') {
+            when { expression { params.action == 'create' } }
+            steps {
+                script {
+                    def apply = false
+                    try {
+                        input message: 'Please confirm to deploy on EKS', ok: 'Ready to apply the config?'
+                        apply = true
+                    } catch (err) {
+                        apply = false
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                    if (apply) {
+                        sh """
+                            curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+                            chmod +x kubectl
+                            sudo mv kubectl /usr/local/bin/
+                            kubectl apply -f .
+                        """
+                    }
                 }
             }
-        }    
-
+        }
     }
 }
