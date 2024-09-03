@@ -23,7 +23,54 @@ pipeline {
                 )
             }
         }
-
+        // stage('Unit Testing') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             mvnTest()
+        //         }
+                
+        //     }
+        // }
+        
+        // stage('Maven Integration') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             mvnintegrationTest()
+        //         }
+                
+        //     }    
+        // }
+        // stage('Static Code Analysis: Sonaqube') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             def sonarqubecredentialsId='sonarcube-api'
+        //             statiCodeAnalysis(sonarqubecredentialsId)
+        //         }
+                
+        //     }    
+        // }
+        // stage('Quality Gates Status Check: Sonaqube') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             def sonarqubecredentialsId='sonarcube-api'
+        //             QualityGateStatus(sonarqubecredentialsId)
+        //         }
+                
+        //     }    
+        // }
+        // stage('Maven Build : Maven') {
+        //     when {expression { params.action=='create'}}
+        //     steps {
+        //         script{
+        //             mvnBuild()
+        //         }
+                
+        //     }
+        // }
         stage('Docker Image Build: ECR') {
             when { expression { params.action == 'create' } }
             steps {
@@ -70,7 +117,7 @@ pipeline {
                             terraform refresh
                             terraform plan
                             terraform state list
-                            # terraform apply -auto-approve
+                            terraform apply -auto-approve
                         """
                     }
                 }
